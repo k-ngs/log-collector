@@ -1,0 +1,23 @@
+apiVersion: apps/v1 
+kind: Deployment 
+metadata:
+  name: log-collector-kibana
+spec:
+  selector: 
+    matchLabels:
+      app: kibana 
+  replicas: {{ .Values.replicaCount }} 
+  template: 
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+      - name: kibana
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: "{{ .Values.image.kibana.repository }}:{{ .Values.image.kibana.tag }}"
+        ports:
+        - containerPort: 5601
+        env: 
+         - name: ELASTICSEARCH_HOSTS
+           value: http://es-service.{{ .Release.Namespace }}.svc.cluster.local:9200

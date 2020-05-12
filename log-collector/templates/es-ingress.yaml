@@ -1,0 +1,12 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: es-ingress
+spec:
+  rules:
+  - host: es.example.com
+    http:
+      paths:
+      - backend:
+          serviceName: es-service
+          servicePort: 9200

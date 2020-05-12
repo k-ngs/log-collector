@@ -1,0 +1,31 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: log-collector-elasticsearch 
+  labels:
+    app.kubernetes.io/name: {{ include "log-collector.name" . }}
+    helm.sh/chart: {{ include "log-collector.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app: elasticsearch
+spec:
+  selector: 
+    matchLabels:
+      app: elasticsearch 
+  replicas: {{ .Values.replicaCount }} 
+  template: 
+    metadata:
+      labels:
+        app: elasticsearch 
+    spec:
+      containers:
+      - name: elasticsearch
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: "{{ .Values.image.elasticsearch.repository }}:{{ .Values.image.elasticsearch.tag }}"
+        env: 
+          - name: discovery.type
+            value: "single-node"
+          - name: ES_JAVA_OPTS
+            value: "-Xms512m -Xmx512m"
+        ports:
+        - containerPort: 9200
